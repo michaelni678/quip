@@ -8,7 +8,7 @@ pub fn expand(path: TokenStream, input: TokenStream) -> TokenStream {
     let mut values = Vec::new();
 
     let output = for_each_quip_interpolation(input, &mut |block| {
-        let ident = format_ident!("interpolation{counter}");
+        let ident = format_ident!("__interpolation{counter}");
 
         idents.push(ident.clone());
         values.push(block);
