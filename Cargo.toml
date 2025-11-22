@@ -15,6 +15,14 @@ documentation = "https://docs.rs/quip"
 [lib]
 proc-macro = true
 
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = [
+    "--cfg",
+    "docsrs",
+    "--sort-modules-by-appearance",
+]
+
 [dependencies]
 proc-macro2 = "1"
 quote = "1"
