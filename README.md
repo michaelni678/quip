@@ -24,8 +24,8 @@ Quip calls the underlying quasi-quotation macros, so include the appropriate dep
 ```toml
 [dependencies]
 quip = "0.1.0"
-quote = "1"    # For `quip` and `quip_spanned`.
-syn = "2"      # For `parse_quip` and `parse_quip_spanned`.
+quote = "1"    # For `quip!` and `quip_spanned!`.
+syn = "2"      # For `parse_quip!` and `parse_quip_spanned!`.
 ```
 
 # Syntax
