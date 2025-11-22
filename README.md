@@ -65,4 +65,3 @@ The code above expands to:
 [`syn::parse_quote_spanned!`]: https://docs.rs/syn/latest/syn/macro.parse_quote_spanned.html
 
 [`quote::ToTokens`]: https://docs.rs/quote/latest/quote/trait.ToTokens.html
-[`syn::Parse`]: https://docs.rs/syn/latest/syn/parse/trait.Parse.html
