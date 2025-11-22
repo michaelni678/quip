@@ -1,26 +1,104 @@
+//! **Quip** adds expression interpolation to several quasi-quoting macros:
+//!
+//! - [`quote::quote!`] → [`quip!`]
+//! - [`quote::quote_spanned!`] → [`quip_spanned!`]
+//! - [`syn::parse_quote!`] → [`parse_quip!`]
+//! - [`syn::parse_quote_spanned!`] → [`parse_quip_spanned!`]
+//!
+//! # Setup
+//!
+//! Quip calls the underlying quasi-quotation macros, so include the appropriate
+//! dependencies:
+//!
+//! ```toml
+//! [dependencies]
+//! quip = "0.1.0"
+//! quote = "1"    # For `quip!` and `quip_spanned!`.
+//! syn = "2"      # For `parse_quip!` and `parse_quip_spanned!`.
+//! ```
+//!
+//! # Syntax
+//!
+//! All Quip macros use `#{...}` for expression interpolation, where `...` must
+//! evaluate to a type implementing [`quote::ToTokens`].  Everything else —
+//! including repetition and hygiene — works the same as the underlying macro.
+//!
+//! # Behind the Scenes
+//!
+//! Quip scans tokens and transforms each expression interpolation `#{...}` into
+//! a variable interpolation `#...` by binding the expression to a temporary
+//! variable. The macro then passes the transformed tokens to the underlying
+//! quasi-quotation macro.
+//!
+//! ```
+//! # {} /*
+//! quip! {
+//!     impl MyTrait for #{item.name} {}
+//! }
+//! # */
+//! ```
+//!
+//! The code above expands to:
+//!
+//! ```
+//! # {} /*
+//! {
+//!     let __interpolation0 = &item.name;
+//!
+//!     ::quote::quote! {
+//!         impl MyTrait for #__interpolation0 {}
+//!     }
+//! }
+//! # */
+//! ```
+//!
+//! [`quip!`]: https://docs.rs/quip/latest/quip/macro.quip.html
+//! [`quip_spanned!`]: https://docs.rs/quip/latest/quip/macro.quip_spanned.html
+//! [`parse_quip!`]: https://docs.rs/quip/latest/quip/macro.parse_quip.html
+//! [`parse_quip_spanned!`]: https://docs.rs/quip/latest/quip/macro.parse_quip_spanned.html
+//!
+//! [`quote::quote!`]: https://docs.rs/quote/latest/quote/macro.quote.html
+//! [`quote::quote_spanned!`]: https://docs.rs/quote/latest/quote/macro.quote_spanned.html
+//! [`syn::parse_quote!`]: https://docs.rs/syn/latest/syn/macro.parse_quote.html
+//! [`syn::parse_quote_spanned!`]: https://docs.rs/syn/latest/syn/macro.parse_quote_spanned.html
+//!
+//! [`quote::ToTokens`]: https://docs.rs/quote/latest/quote/trait.ToTokens.html
+
 use proc_macro::TokenStream;
 use quote::quote;
 
 mod core;
 
+/// Wraps [`quote::quote!`].
+/// 
+/// [`quote::quote!`]: https://docs.rs/quote/latest/quote/macro.quote.html
 #[proc_macro]
 pub fn quip(input: TokenStream) -> TokenStream {
     let path = quote!(::quote::quote!);
     core::expand(path, input.into()).into()
 }
 
+/// Wraps [`quote::quote_spanned!`].
+/// 
+/// [`quote::quote_spanned!`]: https://docs.rs/quote/latest/quote/macro.quote_spanned.html
 #[proc_macro]
 pub fn quip_spanned(input: TokenStream) -> TokenStream {
     let path = quote!(::quote::quote_spanned!);
     core::expand(path, input.into()).into()
 }
 
+/// Wraps [`syn::parse_quote!`].
+/// 
+/// [`syn::parse_quote!`]: https://docs.rs/syn/latest/syn/macro.parse_quote.html
 #[proc_macro]
 pub fn parse_quip(input: TokenStream) -> TokenStream {
     let path = quote!(::syn::parse_quote!);
     core::expand(path, input.into()).into()
 }
 
+/// Wraps [`syn::parse_quote_spanned!`].
+/// 
+/// [`syn::parse_quote_spanned!`]: https://docs.rs/syn/latest/syn/macro.parse_quote_spanned.html
 #[proc_macro]
 pub fn parse_quip_spanned(input: TokenStream) -> TokenStream {
     let path = quote!(::syn::parse_quote_spanned!);
