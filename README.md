@@ -32,6 +32,18 @@ syn = "2"      # For `parse_quip!` and `parse_quip_spanned!`.
 
 All Quip macros use `#{...}` for expression interpolation, where `...` must evaluate to a type implementing [`quote::ToTokens`].  Everything else — including repetition and hygiene — works the same as the underlying macro.
 
+```rust
+quip! {
+    impl Clone for #{item.name} {
+        fn clone(&self) -> Self {
+            Self {
+                #(#{item.members}: self.#{item.members}.clone(),)*
+            }
+        }
+    }
+}
+```
+
 # Behind the Scenes
 
 Quip scans tokens and transforms each expression interpolation `#{...}` into a variable interpolation `#...` by binding the expression to a temporary variable. The macro then passes the transformed tokens to the underlying quasi-quotation macro.
