@@ -36,7 +36,7 @@ All Quip macros use `#{...}` for expression interpolation, where `...` must eval
 
 Quip scans tokens and transforms each expression interpolation `#{...}` into a variable interpolation `#...` by binding the expression to a temporary variable. The macro then passes the transformed tokens to the underlying quasi-quotation macro.
 
-```rs
+```rust
 quip! {
     impl MyTrait for #{item.name} {}
 }
