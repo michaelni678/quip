@@ -30,7 +30,7 @@ syn = "2"      # For `parse_quip!` and `parse_quip_spanned!`.
 
 # Syntax
 
-All Quip macros use `#{...}` for expression interpolation, where `...` must evaluate to a type implementing [`quote::ToTokens`]. Repetition, hygiene, and all other behavior are identical to the underlying macro.
+All Quip macros use `#{...}` for expression interpolation, where `...` must evaluate to a type implementing [`quote::ToTokens`]. All other aspects, including repetition and hygiene, behave identically to the underlying macro.
 
 ```rust
 quip! {
