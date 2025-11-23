@@ -7,3 +7,8 @@ mod utilities;
 fn lookalike() {
     assert!(utilities::tokens::eq(quip!(r#""#{x}), quote!(r#""#{x})));
 }
+
+#[test]
+fn empty() {
+    assert!(utilities::tokens::eq(quip!(#{}), quote!(#{})));
+}

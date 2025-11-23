@@ -38,8 +38,10 @@ where
             && punct.as_char() == '#'
             && let Some(TokenTree::Group(group)) = tts.peek()
             && group.delimiter() == Delimiter::Brace
+            && let stream = group.stream()
+            && !stream.is_empty()
         {
-            output.extend(apply(group.stream()));
+            output.extend(apply(stream));
 
             tts.next();
         } else if let TokenTree::Group(group) = tt {
