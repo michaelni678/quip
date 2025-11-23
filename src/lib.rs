@@ -82,7 +82,7 @@ use quote::quote;
 
 mod core;
 
-/// Wraps [`quote::quote!`].
+/// Adds expression interpolation to [`quote::quote!`].
 ///
 /// [`quote::quote!`]: https://docs.rs/quote/latest/quote/macro.quote.html
 #[proc_macro]
@@ -91,7 +91,7 @@ pub fn quip(input: TokenStream) -> TokenStream {
     core::expand(path, input.into()).into()
 }
 
-/// Wraps [`quote::quote_spanned!`].
+/// Adds expression interpolation to [`quote::quote_spanned!`].
 ///
 /// [`quote::quote_spanned!`]: https://docs.rs/quote/latest/quote/macro.quote_spanned.html
 #[proc_macro]
@@ -100,7 +100,7 @@ pub fn quip_spanned(input: TokenStream) -> TokenStream {
     core::expand(path, input.into()).into()
 }
 
-/// Wraps [`syn::parse_quote!`].
+/// Adds expression interpolation to [`syn::parse_quote!`].
 ///
 /// [`syn::parse_quote!`]: https://docs.rs/syn/latest/syn/macro.parse_quote.html
 #[proc_macro]
@@ -109,7 +109,7 @@ pub fn parse_quip(input: TokenStream) -> TokenStream {
     core::expand(path, input.into()).into()
 }
 
-/// Wraps [`syn::parse_quote_spanned!`].
+/// Adds expression interpolation to [`syn::parse_quote_spanned!`].
 ///
 /// [`syn::parse_quote_spanned!`]: https://docs.rs/syn/latest/syn/macro.parse_quote_spanned.html
 #[proc_macro]
