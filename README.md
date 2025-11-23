@@ -1,6 +1,6 @@
-<h1 style="text-align: center;">Quip</h1>
-<h3 style="text-align: center;">Quasi-quoting macros with expression interpolation</h3>
-<div style="text-align: center;">
+<h1 align="center">Quip</h1>
+<h3 align="center">Quasi-quoting macros with expression interpolation</h3>
+<div align="center">
 
 [![docs.rs](https://img.shields.io/badge/docs.rs-quip-58a78a?style=for-the-badge&logo=Docs.rs)](https://docs.rs/quip)
 &nbsp;&nbsp;&nbsp;
