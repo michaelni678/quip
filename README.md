@@ -1,6 +1,6 @@
-<h1 align="center">Quip</h1>
-<h3 align="center">Quasi-quoting macros with expression interpolation</h3>
-<div align="center">
+<h1 style="text-align: center;">Quip</h1>
+<h3 style="text-align: center;">Quasi-quoting macros with expression interpolation</h3>
+<div style="text-align: center;">
 
 [![docs.rs](https://img.shields.io/badge/docs.rs-quip-58a78a?style=for-the-badge&logo=Docs.rs)](https://docs.rs/quip)
 &nbsp;&nbsp;&nbsp;
@@ -19,7 +19,7 @@
 
 # Setup
 
-Quip calls the underlying quasi-quotation macros, so include the appropriate dependencies:
+Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
@@ -30,7 +30,7 @@ syn = "2"      # For `parse_quip!` and `parse_quip_spanned!`.
 
 # Syntax
 
-All Quip macros use `#{...}` for expression interpolation, where `...` must evaluate to a type implementing [`quote::ToTokens`].  Everything else — including repetition and hygiene — works the same as the underlying macro.
+All Quip macros use `#{...}` for expression interpolation, where `...` must evaluate to a type implementing [`quote::ToTokens`]. Repetition, hygiene, and all other behavior are identical to the underlying macro.
 
 ```rust
 quip! {

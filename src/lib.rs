@@ -7,8 +7,7 @@
 //!
 //! # Setup
 //!
-//! Quip calls the underlying quasi-quotation macros, so include the appropriate
-//! dependencies:
+//! Add this to your `Cargo.toml`:
 //!
 //! ```toml
 //! [dependencies]
@@ -20,8 +19,8 @@
 //! # Syntax
 //!
 //! All Quip macros use `#{...}` for expression interpolation, where `...` must
-//! evaluate to a type implementing [`quote::ToTokens`].  Everything else —
-//! including repetition and hygiene — works the same as the underlying macro.
+//! evaluate to a type implementing [`quote::ToTokens`]. Repetition, hygiene,
+//! and all other behavior are identical to the underlying macro.
 //!
 //! ```
 //! # {} /*
