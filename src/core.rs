@@ -4,29 +4,29 @@ use quote::{TokenStreamExt, format_ident, quote};
 pub fn expand(path: TokenStream, input: TokenStream) -> TokenStream {
     let mut counter = 0;
 
-    let mut idents = Vec::new();
-    let mut values = Vec::new();
+    let mut variables = Vec::new();
+    let mut expressions = Vec::new();
 
-    let output = for_each_quip_interpolation(input, &mut |block| {
-        let ident = format_ident!("__interpolation{counter}");
+    let output = for_each_expression_interpolation(input, &mut |expression| {
+        let variable = format_ident!("__interpolation{counter}");
 
-        idents.push(ident.clone());
-        values.push(block);
+        variables.push(variable.clone());
+        expressions.push(expression);
 
         counter += 1;
 
-        quote!(# #ident)
+        quote!(# #variable)
     });
 
     quote! {
         {
-            #(let #idents = &#values;)*
+            #(let #variables = &#expressions;)*
             #path { #output }
         }
     }
 }
 
-fn for_each_quip_interpolation<F>(input: TokenStream, apply: &mut F) -> TokenStream
+fn for_each_expression_interpolation<F>(input: TokenStream, apply: &mut F) -> TokenStream
 where
     F: FnMut(TokenStream) -> TokenStream,
 {
@@ -38,16 +38,16 @@ where
             && punct.as_char() == '#'
             && let Some(TokenTree::Group(group)) = tts.peek()
             && group.delimiter() == Delimiter::Brace
-            && let stream = group.stream()
-            && !stream.is_empty()
+            && let expression = group.stream()
+            && !expression.is_empty()
         {
-            output.extend(apply(stream));
+            output.extend(apply(expression));
 
             tts.next();
         } else if let TokenTree::Group(group) = tt {
             output.append(Group::new(
                 group.delimiter(),
-                for_each_quip_interpolation(group.stream(), apply),
+                for_each_expression_interpolation(group.stream(), apply),
             ));
         } else {
             output.append(tt);
