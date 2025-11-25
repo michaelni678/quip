@@ -56,11 +56,11 @@
 //!
 //! ```
 //! # {} /*
-//! {
-//!     let __interpolation0 = &item.name;
-//!
-//!     ::quote::quote! {
-//!         impl MyTrait for #__interpolation0 {}
+//! match (&item.name,) {
+//!     (__interpolation0,) => {
+//!         ::quote::quote! {
+//!             impl MyTrait for #__interpolation0 {}
+//!         }
 //!     }
 //! }
 //! # */
