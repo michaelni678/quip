@@ -19,9 +19,10 @@ pub fn expand(path: TokenStream, input: TokenStream) -> TokenStream {
     });
 
     quote! {
-        {
-            #(let #variables = &#expressions;)*
-            #path { #output }
+        match (#(&#expressions,)*) {
+            (#(#variables,)*) => {
+                #path { #output }
+            }
         }
     }
 }

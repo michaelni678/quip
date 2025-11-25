@@ -50,3 +50,27 @@ fn expression_repetition() {
         quote!(#(#xy),*)
     ));
 }
+
+#[test]
+fn expression_block() {
+    let x = quote!(X);
+    let y = quote!("y");
+
+    let quip = quip! {
+        impl #{{ if true { x } else { unreachable!(); }}} {
+            fn f() -> &'static str {
+                #{{ if true { y } else { unreachable!(); }}}
+            }
+        }
+    };
+
+    let quote = quote! {
+        impl X {
+            fn f() -> &'static str {
+                "y"
+            }
+        }
+    };
+
+    assert!(utilities::tokens::eq(quip, quote));
+}
