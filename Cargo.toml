@@ -28,4 +28,4 @@ proc-macro2 = "1"
 quote = "1"
 
 [dev-dependencies]
-syn = "2"
+utilities = { path = "tests/utilities" }

@@ -1,0 +1,11 @@
+[package]
+name = "utilities"
+edition = "2024"
+authors = ["Michael Ni <michael.ni678@gmail.com>"]
+publish = false
+
+[lib]
+path = "lib.rs"
+
+[dependencies]
+proc-macro2 = "1"
