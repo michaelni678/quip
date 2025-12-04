@@ -25,10 +25,10 @@ fn no_expression_interpolations() {
 // interpolation.
 #[test]
 fn single_expression_interpolation() {
-    let name = quote!(Triangle);
+    let shape = quote!(Triangle);
 
     let output = quip! {
-        impl Shape for #{name} {
+        impl Shape for #{shape} {
             const SIDES: usize = 3;
         }
     };
@@ -46,11 +46,11 @@ fn single_expression_interpolation() {
 // interpolations.
 #[test]
 fn multiple_expression_interpolations() {
-    let name = quote!(Triangle);
+    let shape = quote!(Triangle);
     let sides = quote!(3);
 
     let output = quip! {
-        impl Shape for #{name} {
+        impl Shape for #{shape} {
             const SIDES: usize = #{sides};
         }
     };

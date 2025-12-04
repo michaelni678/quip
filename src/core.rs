@@ -167,10 +167,10 @@ mod tests {
         let input = quote! {
             // The interpolation contains an empty token stream.
             #{}
-            // `#` is not a punctuation token, it belongs to the raw string 
+            // `#` is not a punctuation token, it belongs to the raw string
             // literal.
             r#""#{x}
-            // `#` is not a punctuation token and `{x}` is not a braced group. 
+            // `#` is not a punctuation token and `{x}` is not a braced group.
             // They're all part of a string literal.
             "#{x}"
         };
@@ -193,7 +193,7 @@ mod tests {
     #[test]
     fn skips_variable_interpolations() {
         let input = stringify! {
-            impl Shape for #name {
+            impl Shape for #shape {
                 const SIDES: usize = #sides;
             }
         };
