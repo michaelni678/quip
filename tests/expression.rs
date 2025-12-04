@@ -69,7 +69,7 @@ fn multiple_expression_interpolations() {
 //
 // The code below fails to compile.
 //
-// ```
+// ```rust
 // let output = {
 //     let x = &[&String::new()][0];
 //     quote!(#x)
@@ -79,11 +79,11 @@ fn multiple_expression_interpolations() {
 // Quip uses `match`, which naturally extends the lifetime of `x` to the end of
 // the statement. The code below successfully compiles.
 //
-// ```
+// ```rust
 // let output = match (&[&String::new()][0],) {
 //     (x,) => {
 //          quote!(#x)
-//      },
+//      }
 // };
 // ```
 #[test]

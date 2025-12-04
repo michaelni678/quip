@@ -160,18 +160,20 @@ mod tests {
         assert!(token_streams_eq(output, expected));
     }
 
-    // Quip should not replace an expression interpolation when:
-    //
-    // - The interpolation contains an empty token stream.
-    //
-    // - The `#` is not a punctuation token. For example, `r#""#{x}` does not
-    //   contain a valid expression interpolation because `#` belongs to the raw
-    //   string literal rather than being a punctuation token.
-    //
-    // This test verifies these cases.
+    // This test verifies Quip does not replace expression interpolations in the
+    // edge cases described below.
     #[test]
     fn skips_invalid_expression_interpolations() {
-        let input = quote!(#{} r#""#{x});
+        let input = quote! {
+            // The interpolation contains an empty token stream.
+            #{}
+            // `#` is not a punctuation token, it belongs to the raw string 
+            // literal.
+            r#""#{x}
+            // `#` is not a punctuation token and `{x}` is not a braced group. 
+            // They're all part of a string literal.
+            "#{x}"
+        };
 
         let mut variables = Vec::new();
         let mut expressions = Vec::new();
