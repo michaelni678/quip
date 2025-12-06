@@ -31,7 +31,7 @@ fn replace(
 
         counter += 1;
 
-        quote!(#variable)
+        TokenStream::from(TokenTree::Ident(variable))
     })
 }
 
