@@ -31,7 +31,7 @@ fn replace(
 
         counter += 1;
 
-        quote!(# #variable)
+        TokenStream::from(TokenTree::Ident(variable))
     })
 }
 
@@ -43,20 +43,30 @@ where
     let mut tts = input.into_iter().peekable();
 
     while let Some(tt) = tts.next() {
-        if let TokenTree::Punct(ref punct) = tt
-            && punct.as_char() == '#'
-            && let Some(TokenTree::Group(group)) = tts.peek()
-            && group.delimiter() == Delimiter::Brace
-            && let expression = group.stream()
-            && !expression.is_empty()
-        {
-            output.extend(apply(expression));
+        match tt {
+            TokenTree::Punct(punct) => {
+                let character = punct.as_char();
+                output.append(punct);
 
-            tts.next();
-        } else if let TokenTree::Group(group) = tt {
-            output.append(Group::new(group.delimiter(), walk(group.stream(), apply)));
-        } else {
-            output.append(tt);
+                if character == '#'
+                    && let Some(TokenTree::Group(group)) = tts.peek()
+                    && group.delimiter() == Delimiter::Brace
+                    && let expression = group.stream()
+                    && !expression.is_empty()
+                {
+                    output.extend(apply(expression));
+                    tts.next();
+                }
+            }
+            TokenTree::Group(group) => {
+                let span = group.span();
+
+                let mut group = Group::new(group.delimiter(), walk(group.stream(), apply));
+                group.set_span(span);
+
+                output.append(group);
+            }
+            _ => output.append(tt),
         }
     }
 
