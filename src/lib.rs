@@ -84,8 +84,19 @@ use quote::quote;
 mod core;
 
 /// Adds expression interpolation to [`quote::quote!`].
+/// 
+/// # Setup
+/// 
+/// This macro requires the [`quote`] crate as an additional dependency. Add this to your `Cargo.toml`:
+/// 
+/// ```toml
+/// [dependencies]
+/// quip = "0.2.0"
+/// quote = "1"
+/// ```
 ///
 /// [`quote::quote!`]: https://docs.rs/quote/latest/quote/macro.quote.html
+/// [`quote`]: https://crates.io/crates/quote
 #[proc_macro]
 pub fn quip(input: TokenStream) -> TokenStream {
     let path = quote!(::quote::quote!);
@@ -93,8 +104,19 @@ pub fn quip(input: TokenStream) -> TokenStream {
 }
 
 /// Adds expression interpolation to [`quote::quote_spanned!`].
+/// 
+/// # Setup
+/// 
+/// This macro requires the [`quote`] crate as an additional dependency. Add this to your `Cargo.toml`:
+/// 
+/// ```toml
+/// [dependencies]
+/// quip = "0.2.0"
+/// quote = "1"
+/// ```
 ///
 /// [`quote::quote_spanned!`]: https://docs.rs/quote/latest/quote/macro.quote_spanned.html
+/// [`quote`]: https://crates.io/crates/quote
 #[proc_macro]
 pub fn quip_spanned(input: TokenStream) -> TokenStream {
     let path = quote!(::quote::quote_spanned!);
@@ -102,8 +124,19 @@ pub fn quip_spanned(input: TokenStream) -> TokenStream {
 }
 
 /// Adds expression interpolation to [`syn::parse_quote!`].
+/// 
+/// # Setup
+/// 
+/// This macro requires the [`syn`] crate as an additional dependency. Add this to your `Cargo.toml`:
+/// 
+/// ```toml
+/// [dependencies]
+/// quip = "0.2.0"
+/// syn = "2"
+/// ```
 ///
 /// [`syn::parse_quote!`]: https://docs.rs/syn/latest/syn/macro.parse_quote.html
+/// [`syn`]: https://crates.io/crates/syn
 #[proc_macro]
 pub fn parse_quip(input: TokenStream) -> TokenStream {
     let path = quote!(::syn::parse_quote!);
@@ -111,8 +144,19 @@ pub fn parse_quip(input: TokenStream) -> TokenStream {
 }
 
 /// Adds expression interpolation to [`syn::parse_quote_spanned!`].
+/// 
+/// # Setup
+/// 
+/// This macro requires the [`syn`] crate as an additional dependency. Add this to your `Cargo.toml`:
+/// 
+/// ```toml
+/// [dependencies]
+/// quip = "0.2.0"
+/// syn = "2"
+/// ```
 ///
 /// [`syn::parse_quote_spanned!`]: https://docs.rs/syn/latest/syn/macro.parse_quote_spanned.html
+/// [`syn`]: https://crates.io/crates/syn
 #[proc_macro]
 pub fn parse_quip_spanned(input: TokenStream) -> TokenStream {
     let path = quote!(::syn::parse_quote_spanned!);
