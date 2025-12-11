@@ -66,11 +66,6 @@
 //! # */
 //! ```
 //!
-//! [`quip!`]: https://docs.rs/quip/latest/quip/macro.quip.html
-//! [`quip_spanned!`]: https://docs.rs/quip/latest/quip/macro.quip_spanned.html
-//! [`parse_quip!`]: https://docs.rs/quip/latest/quip/macro.parse_quip.html
-//! [`parse_quip_spanned!`]: https://docs.rs/quip/latest/quip/macro.parse_quip_spanned.html
-//!
 //! [`quote::quote!`]: https://docs.rs/quote/latest/quote/macro.quote.html
 //! [`quote::quote_spanned!`]: https://docs.rs/quote/latest/quote/macro.quote_spanned.html
 //! [`syn::parse_quote!`]: https://docs.rs/syn/latest/syn/macro.parse_quote.html
