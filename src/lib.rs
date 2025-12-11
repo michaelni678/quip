@@ -84,11 +84,12 @@ use quote::quote;
 mod core;
 
 /// Adds expression interpolation to [`quote::quote!`].
-/// 
+///
 /// # Setup
-/// 
-/// This macro requires the [`quote`] crate as an additional dependency. Add this to your `Cargo.toml`:
-/// 
+///
+/// This macro requires the [`quote`] crate as an additional dependency. Add
+/// this to your `Cargo.toml`:
+///
 /// ```toml
 /// [dependencies]
 /// quip = "0.2.0"
@@ -104,11 +105,12 @@ pub fn quip(input: TokenStream) -> TokenStream {
 }
 
 /// Adds expression interpolation to [`quote::quote_spanned!`].
-/// 
+///
 /// # Setup
-/// 
-/// This macro requires the [`quote`] crate as an additional dependency. Add this to your `Cargo.toml`:
-/// 
+///
+/// This macro requires the [`quote`] crate as an additional dependency. Add
+/// this to your `Cargo.toml`:
+///
 /// ```toml
 /// [dependencies]
 /// quip = "0.2.0"
@@ -124,11 +126,12 @@ pub fn quip_spanned(input: TokenStream) -> TokenStream {
 }
 
 /// Adds expression interpolation to [`syn::parse_quote!`].
-/// 
+///
 /// # Setup
-/// 
-/// This macro requires the [`syn`] crate as an additional dependency. Add this to your `Cargo.toml`:
-/// 
+///
+/// This macro requires the [`syn`] crate as an additional dependency. Add this
+/// to your `Cargo.toml`:
+///
 /// ```toml
 /// [dependencies]
 /// quip = "0.2.0"
@@ -144,11 +147,12 @@ pub fn parse_quip(input: TokenStream) -> TokenStream {
 }
 
 /// Adds expression interpolation to [`syn::parse_quote_spanned!`].
-/// 
+///
 /// # Setup
-/// 
-/// This macro requires the [`syn`] crate as an additional dependency. Add this to your `Cargo.toml`:
-/// 
+///
+/// This macro requires the [`syn`] crate as an additional dependency. Add this
+/// to your `Cargo.toml`:
+///
 /// ```toml
 /// [dependencies]
 /// quip = "0.2.0"
