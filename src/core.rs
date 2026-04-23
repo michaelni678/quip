@@ -95,7 +95,7 @@ mod tests {
     // This test verifies that the expressions are captured exactly as written.
     #[test]
     fn extracts_expression_verbatim() {
-        let input = tokens!(#{[] () for x ? << 0i16 ""});
+        let input = tokens! { #{[] () for x ? << 0i16 ""} };
 
         let mut variables = Vec::new();
         let mut expressions = Vec::new();
