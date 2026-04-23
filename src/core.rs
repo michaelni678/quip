@@ -1,3 +1,4 @@
+use met::GroupExt;
 use proc_macro2::{Delimiter, Group, Ident, TokenStream, TokenTree};
 use quote::{TokenStreamExt, format_ident, quote};
 
@@ -59,12 +60,11 @@ where
                 }
             }
             TokenTree::Group(group) => {
-                let span = group.span();
-
-                let mut group = Group::new(group.delimiter(), walk(group.stream(), apply));
-                group.set_span(span);
-
-                output.append(group);
+                output.append(Group::new_spanned(
+                    group.span(),
+                    group.delimiter(),
+                    walk(group.stream(), apply),
+                ));
             }
             _ => output.append(token_tree),
         }
@@ -77,9 +77,16 @@ where
 mod tests {
     use super::replace;
 
-    use proc_macro2::TokenStream;
+    use met::{TokenStreamExt, tokens};
     use quote::quote;
-    use utilities::{compare::token_streams_eq, convert::into_array};
+
+    fn into_array<T, const N: usize>(value: impl TryInto<[T; N]>) -> [T; N] {
+        let Ok(array) = value.try_into() else {
+            panic!("failed to convert value into an array of size {N}");
+        };
+
+        array
+    }
 
     // Quip does not validate the token stream inside expression interpolations.
     // Any errors within those interpolated expressions are outside Quip's
@@ -88,7 +95,7 @@ mod tests {
     // This test verifies that the expressions are captured exactly as written.
     #[test]
     fn extracts_expression_verbatim() {
-        let input = quote!(#{[] () for x ? << 0i16 ""});
+        let input = tokens!(#{[] () for x ? << 0i16 ""});
 
         let mut variables = Vec::new();
         let mut expressions = Vec::new();
@@ -100,19 +107,15 @@ mod tests {
 
         let expected = quote!(# #variable);
 
-        assert!(token_streams_eq(
-            expression,
-            quote!([] () for x ? << 0i16 "")
-        ));
-
-        assert!(token_streams_eq(output, expected));
+        assert!(expression.equals(&tokens! { [] () for x ? << 0i16 "" }));
+        assert!(output.equals(&expected));
     }
 
     // This test verifies that expression interpolations are replaced with variable
     // interpolations.
     #[test]
     fn replaces_expression_interpolations() {
-        let input = quote! {
+        let input = tokens! {
             let #{x} = 0;
 
             impl #{y} for #{z} {}
@@ -132,18 +135,18 @@ mod tests {
             impl # #variable_y for # #variable_z {}
         };
 
-        assert!(token_streams_eq(expression_x, quote!(x)));
-        assert!(token_streams_eq(expression_y, quote!(y)));
-        assert!(token_streams_eq(expression_z, quote!(z)));
+        assert!(expression_x.equals(&tokens!(x)));
+        assert!(expression_y.equals(&tokens!(y)));
+        assert!(expression_z.equals(&tokens!(z)));
 
-        assert!(token_streams_eq(output, expected));
+        assert!(output.equals(&expected));
     }
 
     // This test verifies that expression interpolations are replaced with variable
     // interpolations within token tree groups.
     #[test]
     fn replaces_expression_interpolations_in_groups() {
-        let input = quote! {
+        let input = tokens! {
             let Some(#{x}) = #{y} else {
                 return Err([#{z}]);
             };
@@ -163,18 +166,18 @@ mod tests {
             };
         };
 
-        assert!(token_streams_eq(expression_x, quote!(x)));
-        assert!(token_streams_eq(expression_y, quote!(y)));
-        assert!(token_streams_eq(expression_z, quote!(z)));
+        assert!(expression_x.equals(&tokens!(x)));
+        assert!(expression_y.equals(&tokens!(y)));
+        assert!(expression_z.equals(&tokens!(z)));
 
-        assert!(token_streams_eq(output, expected));
+        assert!(output.equals(&expected));
     }
 
     // This test verifies Quip does not replace expression interpolations in the
     // edge cases described below.
     #[test]
     fn skips_invalid_expression_interpolations() {
-        let input = quote! {
+        let input = tokens! {
             // The interpolation contains an empty token stream.
             #{}
             // `#` is not a punctuation token, it belongs to the raw string
@@ -195,20 +198,18 @@ mod tests {
 
         let expected = input;
 
-        assert!(token_streams_eq(output, expected));
+        assert!(output.equals(&expected));
     }
 
     // Variable interpolations are handled by the underlying macros. This test
     // verifies that all variable interpolations are skipped.
     #[test]
     fn skips_variable_interpolations() {
-        let input = stringify! {
+        let input = tokens! {
             impl Shape for #shape {
                 const SIDES: usize = #sides;
             }
         };
-
-        let input: TokenStream = input.parse().unwrap();
 
         let mut variables = Vec::new();
         let mut expressions = Vec::new();
@@ -220,6 +221,6 @@ mod tests {
 
         let expected = input;
 
-        assert!(token_streams_eq(output, expected));
+        assert!(output.equals(&expected));
     }
 }

@@ -24,9 +24,9 @@ rustdoc-args = [
 ]
 
 [dependencies]
+met = "0.1.0"
 proc-macro2 = "1"
 quote = "1"
 
 [dev-dependencies]
 syn = { version = "2", features = ["full", "extra-traits"] }
-utilities = { path = "tests/utilities" }
