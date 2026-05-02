@@ -11,7 +11,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! quip = "0.2.0"
+//! quip = "0.2.1"
 //! quote = "1"    # For `quip!` and `quip_spanned!`.
 //! syn = "2"      # For `parse_quip!` and `parse_quip_spanned!`.
 //! ```
