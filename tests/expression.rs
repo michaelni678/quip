@@ -1,6 +1,6 @@
+use met::assert_stream_eq;
 use quip::quip;
 use quote::quote;
-use utilities::compare::token_streams_eq;
 
 // This test verifies Quip expands to an identical token stream if no expression
 // interpolations are found.
@@ -18,14 +18,14 @@ fn no_expression_interpolations() {
         }
     };
 
-    assert!(token_streams_eq(output, expected));
+    assert_stream_eq!(output, expected);
 }
 
 // This test verifies Quip works properly when there is only one expression
 // interpolation.
 #[test]
 fn single_expression_interpolation() {
-    let shape = quote!(Triangle);
+    let shape = quote! { Triangle };
 
     let output = quip! {
         impl Shape for #{shape} {
@@ -39,15 +39,15 @@ fn single_expression_interpolation() {
         }
     };
 
-    assert!(token_streams_eq(output, expected));
+    assert_stream_eq!(output, expected);
 }
 
 // This test verifies Quip works properly when there are multiple expression
 // interpolations.
 #[test]
 fn multiple_expression_interpolations() {
-    let shape = quote!(Triangle);
-    let sides = quote!(3);
+    let shape = quote! { Triangle };
+    let sides = quote! { 3 };
 
     let output = quip! {
         impl Shape for #{shape} {
@@ -61,7 +61,7 @@ fn multiple_expression_interpolations() {
         }
     };
 
-    assert!(token_streams_eq(output, expected));
+    assert_stream_eq!(output, expected);
 }
 
 // This test verifies temporary values aren't dropped prior to being
@@ -88,8 +88,8 @@ fn multiple_expression_interpolations() {
 // ```
 #[test]
 fn expression_interpolation_contains_temporary_value() {
-    let output = quip!(#{[&String::new()][0]});
-    let expected = quote!("");
+    let output = quip! { #{[&String::new()][0]} };
+    let expected = quote! { "" };
 
-    assert!(token_streams_eq(output, expected));
+    assert_stream_eq!(output, expected);
 }

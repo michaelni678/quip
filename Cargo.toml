@@ -1,6 +1,6 @@
 [package]
 name = "quip"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2024"
 authors = ["Michael Ni <michael.ni678@gmail.com>"]
 repository = "https://github.com/michaelni678/quip"
@@ -24,9 +24,9 @@ rustdoc-args = [
 ]
 
 [dependencies]
+met = "0.1.0"
 proc-macro2 = "1"
 quote = "1"
 
 [dev-dependencies]
 syn = { version = "2", features = ["full", "extra-traits"] }
-utilities = { path = "tests/utilities" }
