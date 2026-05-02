@@ -1,4 +1,4 @@
-use met::GroupExt;
+use met::{GroupExt, PunctExt};
 use proc_macro2::{Delimiter, Group, Ident, TokenStream, TokenTree};
 use quote::{TokenStreamExt, format_ident, quote};
 
@@ -45,19 +45,16 @@ where
 
     while let Some(token_tree) = token_trees.next() {
         match token_tree {
-            TokenTree::Punct(punct) => {
-                let character = punct.as_char();
-                output.append(punct);
-
-                if character == '#'
+            TokenTree::Punct(punct)
+                if punct.is_char('#')
                     && let Some(TokenTree::Group(group)) = token_trees.peek()
                     && group.delimiter() == Delimiter::Brace
                     && let expression = group.stream()
-                    && !expression.is_empty()
-                {
-                    output.extend(apply(expression));
-                    token_trees.next();
-                }
+                    && !expression.is_empty() =>
+            {
+                output.append(punct);
+                output.extend(apply(expression));
+                token_trees.next();
             }
             TokenTree::Group(group) => output.append(Group::new_spanned(
                 group.span(),
