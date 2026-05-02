@@ -1,5 +1,5 @@
 use met::{GroupExt, PunctExt};
-use proc_macro2::{Delimiter, Group, Ident, TokenStream, TokenTree};
+use proc_macro2::{Group, Ident, TokenStream, TokenTree};
 use quote::{TokenStreamExt, format_ident, quote};
 
 pub fn expand(path: TokenStream, input: TokenStream) -> TokenStream {
@@ -48,7 +48,7 @@ where
             TokenTree::Punct(punct)
                 if punct.is_char('#')
                     && let Some(TokenTree::Group(group)) = token_trees.peek()
-                    && group.delimiter() == Delimiter::Brace
+                    && group.is_braced()
                     && let expression = group.stream()
                     && !expression.is_empty() =>
             {
@@ -101,8 +101,6 @@ mod tests {
         let [expression] = into_array(expressions);
 
         let expected = quote! { # #variable };
-
-        dbg!(&output, &expected);
 
         assert_stream_eq!(expression, quote! { [] () for x ? << 0i16 "" });
         assert_stream_eq!(output, expected);
