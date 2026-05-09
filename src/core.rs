@@ -1,6 +1,6 @@
-use met::{GroupExt, PunctExt};
+use met::{GroupExt, PunctExt, TokenStreamExt};
 use proc_macro2::{Group, Ident, TokenStream, TokenTree};
-use quote::{TokenStreamExt, format_ident, quote};
+use quote::{format_ident, quote};
 
 pub fn expand(path: TokenStream, input: TokenStream) -> TokenStream {
     let Replaced {
@@ -38,7 +38,7 @@ fn replace(input: TokenStream) -> Replaced {
 
         counter += 1;
 
-        TokenStream::from(TokenTree::Ident(variable))
+        TokenStream::token(variable)
     });
 
     Replaced {
