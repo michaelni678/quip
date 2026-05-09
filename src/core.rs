@@ -3,10 +3,7 @@ use proc_macro2::{Group, Ident, TokenStream, TokenTree};
 use quote::{TokenStreamExt, format_ident, quote};
 
 pub fn expand(path: TokenStream, input: TokenStream) -> TokenStream {
-    let mut variables = Vec::new();
-    let mut expressions = Vec::new();
-
-    let output = replace(input, &mut variables, &mut expressions);
+    let (variables, expressions, output) = replace(input);
 
     quote! {
         match (#(&#expressions,)*) {
@@ -17,14 +14,13 @@ pub fn expand(path: TokenStream, input: TokenStream) -> TokenStream {
     }
 }
 
-fn replace(
-    input: TokenStream,
-    variables: &mut Vec<Ident>,
-    expressions: &mut Vec<TokenStream>,
-) -> TokenStream {
+fn replace(input: TokenStream) -> (Vec<Ident>, Vec<TokenStream>, TokenStream) {
+    let mut variables = Vec::new();
+    let mut expressions = Vec::new();
+
     let mut counter = 0;
 
-    walk(input, &mut |expression| {
+    let output = walk(input, &mut |expression| {
         let variable = format_ident!("__interpolation{counter}");
 
         variables.push(variable.clone());
@@ -33,7 +29,9 @@ fn replace(
         counter += 1;
 
         TokenStream::from(TokenTree::Ident(variable))
-    })
+    });
+
+    (variables, expressions, output)
 }
 
 fn walk<F>(input: TokenStream, apply: &mut F) -> TokenStream
@@ -92,10 +90,7 @@ mod tests {
     fn extracts_expression_verbatim() {
         let input = quote! { #{ [] () for x ? << 0i16 "" } };
 
-        let mut variables = Vec::new();
-        let mut expressions = Vec::new();
-
-        let output = replace(input, &mut variables, &mut expressions);
+        let (variables, expressions, output) = replace(input);
 
         let [variable] = into_array(variables);
         let [expression] = into_array(expressions);
@@ -116,10 +111,7 @@ mod tests {
             impl #{y} for #{z} {}
         };
 
-        let mut variables = Vec::new();
-        let mut expressions = Vec::new();
-
-        let output = replace(input, &mut variables, &mut expressions);
+        let (variables, expressions, output) = replace(input);
 
         let [variable_x, variable_y, variable_z] = into_array(variables);
         let [expression_x, expression_y, expression_z] = into_array(expressions);
@@ -146,10 +138,7 @@ mod tests {
             };
         };
 
-        let mut variables = Vec::new();
-        let mut expressions = Vec::new();
-
-        let output = replace(input, &mut variables, &mut expressions);
+        let (variables, expressions, output) = replace(input);
 
         let [variable_x, variable_y, variable_z] = into_array(variables);
         let [expression_x, expression_y, expression_z] = into_array(expressions);
@@ -181,10 +170,7 @@ mod tests {
             "#{x}"
         };
 
-        let mut variables = Vec::new();
-        let mut expressions = Vec::new();
-
-        let output = replace(input.clone(), &mut variables, &mut expressions);
+        let (variables, expressions, output) = replace(input.clone());
 
         assert!(variables.is_empty());
         assert!(expressions.is_empty());
@@ -204,10 +190,7 @@ mod tests {
             }
         };
 
-        let mut variables = Vec::new();
-        let mut expressions = Vec::new();
-
-        let output = replace(input.clone(), &mut variables, &mut expressions);
+        let (variables, expressions, output) = replace(input.clone());
 
         assert!(variables.is_empty());
         assert!(expressions.is_empty());
