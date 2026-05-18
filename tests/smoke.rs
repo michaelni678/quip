@@ -2,7 +2,7 @@ use proc_macro2::Span;
 use quip::{parse_quip, parse_quip_spanned, quip, quip_spanned};
 use quote::{quote, quote_spanned};
 use syn::{ExprIf, parse_quote, parse_quote_spanned};
-use utilities::compare::token_streams_eq;
+use tout::assert::assert_stream_eq;
 
 #[test]
 fn quip() {
@@ -21,7 +21,7 @@ fn quip() {
         }
     };
 
-    assert!(token_streams_eq(output, expected));
+    assert_stream_eq!(output, expected);
 }
 
 #[test]
@@ -43,7 +43,7 @@ fn quip_spanned() {
         }
     };
 
-    assert!(token_streams_eq(output, expected));
+    assert_stream_eq!(output, expected);
 }
 
 #[test]

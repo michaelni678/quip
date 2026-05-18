@@ -1,11 +1,13 @@
-use proc_macro2::{Delimiter, Group, Ident, TokenStream, TokenTree};
-use quote::{TokenStreamExt, format_ident, quote};
+use proc_macro2::{Group, Ident, TokenStream, TokenTree};
+use quote::{format_ident, quote};
+use tout::extension::{GroupExt, PunctExt, TokenStreamExt};
 
 pub fn expand(path: TokenStream, input: TokenStream) -> TokenStream {
-    let mut variables = Vec::new();
-    let mut expressions = Vec::new();
-
-    let output = replace(input, &mut variables, &mut expressions);
+    let Replaced {
+        variables,
+        expressions,
+        output,
+    } = replace(input);
 
     quote! {
         match (#(&#expressions,)*) {
@@ -16,14 +18,19 @@ pub fn expand(path: TokenStream, input: TokenStream) -> TokenStream {
     }
 }
 
-fn replace(
-    input: TokenStream,
-    variables: &mut Vec<Ident>,
-    expressions: &mut Vec<TokenStream>,
-) -> TokenStream {
+struct Replaced {
+    variables: Vec<Ident>,
+    expressions: Vec<TokenStream>,
+    output: TokenStream,
+}
+
+fn replace(input: TokenStream) -> Replaced {
+    let mut variables = Vec::new();
+    let mut expressions = Vec::new();
+
     let mut counter = 0;
 
-    walk(input, &mut |expression| {
+    let output = walk(input, &mut |expression| {
         let variable = format_ident!("__interpolation{counter}");
 
         variables.push(variable.clone());
@@ -31,8 +38,14 @@ fn replace(
 
         counter += 1;
 
-        TokenStream::from(TokenTree::Ident(variable))
-    })
+        TokenStream::token(variable)
+    });
+
+    Replaced {
+        variables,
+        expressions,
+        output,
+    }
 }
 
 fn walk<F>(input: TokenStream, apply: &mut F) -> TokenStream
@@ -44,28 +57,22 @@ where
 
     while let Some(token_tree) = token_trees.next() {
         match token_tree {
-            TokenTree::Punct(punct) => {
-                let character = punct.as_char();
-                output.append(punct);
-
-                if character == '#'
+            TokenTree::Punct(punct)
+                if punct.is_char('#')
                     && let Some(TokenTree::Group(group)) = token_trees.peek()
-                    && group.delimiter() == Delimiter::Brace
+                    && group.is_braced()
                     && let expression = group.stream()
-                    && !expression.is_empty()
-                {
-                    output.extend(apply(expression));
-                    token_trees.next();
-                }
+                    && !expression.is_empty() =>
+            {
+                output.append(punct);
+                output.extend(apply(expression));
+                token_trees.next();
             }
-            TokenTree::Group(group) => {
-                let span = group.span();
-
-                let mut group = Group::new(group.delimiter(), walk(group.stream(), apply));
-                group.set_span(span);
-
-                output.append(group);
-            }
+            TokenTree::Group(group) => output.append(Group::new_spanned(
+                group.span(),
+                group.delimiter(),
+                walk(group.stream(), apply),
+            )),
             _ => output.append(token_tree),
         }
     }
@@ -75,11 +82,18 @@ where
 
 #[cfg(test)]
 mod tests {
+    use quote::quote;
+    use tout::{assert::assert_stream_eq, quasi::stream};
+
     use super::replace;
 
-    use proc_macro2::TokenStream;
-    use quote::quote;
-    use utilities::{compare::token_streams_eq, convert::into_array};
+    fn into_array<T, const N: usize>(value: impl TryInto<[T; N]>) -> [T; N] {
+        let Ok(array) = value.try_into() else {
+            panic!("failed to convert value into an array of size {N}");
+        };
+
+        array
+    }
 
     // Quip does not validate the token stream inside expression interpolations.
     // Any errors within those interpolated expressions are outside Quip's
@@ -88,24 +102,17 @@ mod tests {
     // This test verifies that the expressions are captured exactly as written.
     #[test]
     fn extracts_expression_verbatim() {
-        let input = quote!(#{[] () for x ? << 0i16 ""});
+        let input = quote! { #{ [] () for x ? << 0i16 "" } };
 
-        let mut variables = Vec::new();
-        let mut expressions = Vec::new();
+        let replaced = replace(input);
 
-        let output = replace(input, &mut variables, &mut expressions);
+        let [variable] = into_array(replaced.variables);
+        let [expression] = into_array(replaced.expressions);
 
-        let [variable] = into_array(variables);
-        let [expression] = into_array(expressions);
+        let expected = quote! { # #variable };
 
-        let expected = quote!(# #variable);
-
-        assert!(token_streams_eq(
-            expression,
-            quote!([] () for x ? << 0i16 "")
-        ));
-
-        assert!(token_streams_eq(output, expected));
+        assert_stream_eq!(expression, quote! { [] () for x ? << 0i16 "" });
+        assert_stream_eq!(replaced.output, expected);
     }
 
     // This test verifies that expression interpolations are replaced with variable
@@ -118,13 +125,10 @@ mod tests {
             impl #{y} for #{z} {}
         };
 
-        let mut variables = Vec::new();
-        let mut expressions = Vec::new();
+        let replaced = replace(input);
 
-        let output = replace(input, &mut variables, &mut expressions);
-
-        let [variable_x, variable_y, variable_z] = into_array(variables);
-        let [expression_x, expression_y, expression_z] = into_array(expressions);
+        let [variable_x, variable_y, variable_z] = into_array(replaced.variables);
+        let [expression_x, expression_y, expression_z] = into_array(replaced.expressions);
 
         let expected = quote! {
             let # #variable_x = 0;
@@ -132,11 +136,10 @@ mod tests {
             impl # #variable_y for # #variable_z {}
         };
 
-        assert!(token_streams_eq(expression_x, quote!(x)));
-        assert!(token_streams_eq(expression_y, quote!(y)));
-        assert!(token_streams_eq(expression_z, quote!(z)));
-
-        assert!(token_streams_eq(output, expected));
+        assert_stream_eq!(expression_x, quote!(x));
+        assert_stream_eq!(expression_y, quote!(y));
+        assert_stream_eq!(expression_z, quote!(z));
+        assert_stream_eq!(replaced.output, expected);
     }
 
     // This test verifies that expression interpolations are replaced with variable
@@ -149,13 +152,10 @@ mod tests {
             };
         };
 
-        let mut variables = Vec::new();
-        let mut expressions = Vec::new();
+        let replaced = replace(input);
 
-        let output = replace(input, &mut variables, &mut expressions);
-
-        let [variable_x, variable_y, variable_z] = into_array(variables);
-        let [expression_x, expression_y, expression_z] = into_array(expressions);
+        let [variable_x, variable_y, variable_z] = into_array(replaced.variables);
+        let [expression_x, expression_y, expression_z] = into_array(replaced.expressions);
 
         let expected = quote! {
             let Some(# #variable_x) = # #variable_y else {
@@ -163,11 +163,10 @@ mod tests {
             };
         };
 
-        assert!(token_streams_eq(expression_x, quote!(x)));
-        assert!(token_streams_eq(expression_y, quote!(y)));
-        assert!(token_streams_eq(expression_z, quote!(z)));
-
-        assert!(token_streams_eq(output, expected));
+        assert_stream_eq!(expression_x, quote!(x));
+        assert_stream_eq!(expression_y, quote!(y));
+        assert_stream_eq!(expression_z, quote!(z));
+        assert_stream_eq!(replaced.output, expected);
     }
 
     // This test verifies Quip does not replace expression interpolations in the
@@ -185,41 +184,33 @@ mod tests {
             "#{x}"
         };
 
-        let mut variables = Vec::new();
-        let mut expressions = Vec::new();
+        let replaced = replace(input.clone());
 
-        let output = replace(input.clone(), &mut variables, &mut expressions);
-
-        assert!(variables.is_empty());
-        assert!(expressions.is_empty());
+        assert!(replaced.variables.is_empty());
+        assert!(replaced.expressions.is_empty());
 
         let expected = input;
 
-        assert!(token_streams_eq(output, expected));
+        assert_stream_eq!(replaced.output, expected);
     }
 
     // Variable interpolations are handled by the underlying macros. This test
     // verifies that all variable interpolations are skipped.
     #[test]
     fn skips_variable_interpolations() {
-        let input = stringify! {
+        let input = stream! {
             impl Shape for #shape {
                 const SIDES: usize = #sides;
             }
         };
 
-        let input: TokenStream = input.parse().unwrap();
+        let replaced = replace(input.clone());
 
-        let mut variables = Vec::new();
-        let mut expressions = Vec::new();
-
-        let output = replace(input.clone(), &mut variables, &mut expressions);
-
-        assert!(variables.is_empty());
-        assert!(expressions.is_empty());
+        assert!(replaced.variables.is_empty());
+        assert!(replaced.expressions.is_empty());
 
         let expected = input;
 
-        assert!(token_streams_eq(output, expected));
+        assert_stream_eq!(replaced.output, expected);
     }
 }

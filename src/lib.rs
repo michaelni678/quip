@@ -11,7 +11,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! quip = "0.2.0"
+//! quip = "0.2.1"
 //! quote = "1"    # For `quip!` and `quip_spanned!`.
 //! syn = "2"      # For `parse_quip!` and `parse_quip_spanned!`.
 //! ```
@@ -87,7 +87,7 @@ mod core;
 ///
 /// ```toml
 /// [dependencies]
-/// quip = "0.2.0"
+/// quip = "0.2.1"
 /// quote = "1"
 /// ```
 ///
@@ -108,7 +108,7 @@ pub fn quip(input: TokenStream) -> TokenStream {
 ///
 /// ```toml
 /// [dependencies]
-/// quip = "0.2.0"
+/// quip = "0.2.1"
 /// quote = "1"
 /// ```
 ///
@@ -129,7 +129,7 @@ pub fn quip_spanned(input: TokenStream) -> TokenStream {
 ///
 /// ```toml
 /// [dependencies]
-/// quip = "0.2.0"
+/// quip = "0.2.1"
 /// syn = "2"
 /// ```
 ///
@@ -150,7 +150,7 @@ pub fn parse_quip(input: TokenStream) -> TokenStream {
 ///
 /// ```toml
 /// [dependencies]
-/// quip = "0.2.0"
+/// quip = "0.2.1"
 /// syn = "2"
 /// ```
 ///

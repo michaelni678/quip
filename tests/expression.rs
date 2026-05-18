@@ -1,6 +1,6 @@
 use quip::quip;
 use quote::quote;
-use utilities::compare::token_streams_eq;
+use tout::assert::assert_stream_eq;
 
 // This test verifies Quip expands to an identical token stream if no expression
 // interpolations are found.
@@ -18,7 +18,7 @@ fn no_expression_interpolations() {
         }
     };
 
-    assert!(token_streams_eq(output, expected));
+    assert_stream_eq!(output, expected);
 }
 
 // This test verifies Quip works properly when there is only one expression
@@ -39,7 +39,7 @@ fn single_expression_interpolation() {
         }
     };
 
-    assert!(token_streams_eq(output, expected));
+    assert_stream_eq!(output, expected);
 }
 
 // This test verifies Quip works properly when there are multiple expression
@@ -61,7 +61,7 @@ fn multiple_expression_interpolations() {
         }
     };
 
-    assert!(token_streams_eq(output, expected));
+    assert_stream_eq!(output, expected);
 }
 
 // This test verifies temporary values aren't dropped prior to being
@@ -88,8 +88,11 @@ fn multiple_expression_interpolations() {
 // ```
 #[test]
 fn expression_interpolation_contains_temporary_value() {
-    let output = quip!(#{[&String::new()][0]});
+    let output = quip! { 
+        #{[&String::new()][0]}
+    };
+    
     let expected = quote!("");
 
-    assert!(token_streams_eq(output, expected));
+    assert_stream_eq!(output, expected);
 }
