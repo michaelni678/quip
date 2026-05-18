@@ -136,9 +136,9 @@ mod tests {
             impl # #variable_y for # #variable_z {}
         };
 
-        assert_stream_eq!(expression_x, quote!(x));
-        assert_stream_eq!(expression_y, quote!(y));
-        assert_stream_eq!(expression_z, quote!(z));
+        assert_stream_eq!(expression_x, quote! { x });
+        assert_stream_eq!(expression_y, quote! { y });
+        assert_stream_eq!(expression_z, quote! { z });
         assert_stream_eq!(replaced.output, expected);
     }
 
@@ -163,9 +163,9 @@ mod tests {
             };
         };
 
-        assert_stream_eq!(expression_x, quote!(x));
-        assert_stream_eq!(expression_y, quote!(y));
-        assert_stream_eq!(expression_z, quote!(z));
+        assert_stream_eq!(expression_x, quote! { x });
+        assert_stream_eq!(expression_y, quote! { y });
+        assert_stream_eq!(expression_z, quote! { z });
         assert_stream_eq!(replaced.output, expected);
     }
 

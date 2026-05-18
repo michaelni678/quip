@@ -6,8 +6,8 @@ use tout::assert::assert_stream_eq;
 
 #[test]
 fn quip() {
-    let capacity = quote!(256);
-    let error = quote!(Error::InsufficientCapacity);
+    let capacity = quote! { 256 };
+    let error = quote! { Error::InsufficientCapacity };
 
     let output = quip! {
         if length + additional > #{capacity} {
@@ -28,8 +28,8 @@ fn quip() {
 fn quip_spanned() {
     let span = Span::call_site();
 
-    let capacity = quote!(256);
-    let error = quote!(Error::InsufficientCapacity);
+    let capacity = quote! { 256 };
+    let error = quote! { Error::InsufficientCapacity };
 
     let output = quip_spanned! { span =>
         if length + additional > #{capacity} {
@@ -48,8 +48,8 @@ fn quip_spanned() {
 
 #[test]
 fn parse_quip() {
-    let capacity = quote!(256);
-    let error = quote!(Error::InsufficientCapacity);
+    let capacity = quote! { 256 };
+    let error = quote! { Error::InsufficientCapacity };
 
     let output: ExprIf = parse_quip! {
         if length + additional > #{capacity} {
@@ -70,8 +70,8 @@ fn parse_quip() {
 fn parse_quip_spanned() {
     let span = Span::call_site();
 
-    let capacity = quote!(256);
-    let error = quote!(Error::InsufficientCapacity);
+    let capacity = quote! { 256 };
+    let error = quote! { Error::InsufficientCapacity };
 
     let output: ExprIf = parse_quip_spanned! { span =>
         if length + additional > #{capacity} {

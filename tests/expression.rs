@@ -25,7 +25,7 @@ fn no_expression_interpolations() {
 // interpolation.
 #[test]
 fn single_expression_interpolation() {
-    let shape = quote!(Triangle);
+    let shape = quote! { Triangle };
 
     let output = quip! {
         impl Shape for #{shape} {
@@ -46,8 +46,8 @@ fn single_expression_interpolation() {
 // interpolations.
 #[test]
 fn multiple_expression_interpolations() {
-    let shape = quote!(Triangle);
-    let sides = quote!(3);
+    let shape = quote! { Triangle };
+    let sides = quote! { 3 };
 
     let output = quip! {
         impl Shape for #{shape} {
@@ -72,7 +72,7 @@ fn multiple_expression_interpolations() {
 // ```rust
 // let output = {
 //     let x = &[&String::new()][0];
-//     quote!(#x)
+//     quote! { #x }
 // };
 // ```
 //
@@ -82,17 +82,17 @@ fn multiple_expression_interpolations() {
 // ```rust
 // let output = match (&[&String::new()][0],) {
 //     (x,) => {
-//          quote!(#x)
-//      }
+//         quote! { #x }
+//     }
 // };
 // ```
 #[test]
 fn expression_interpolation_contains_temporary_value() {
-    let output = quip! { 
+    let output = quip! {
         #{[&String::new()][0]}
     };
-    
-    let expected = quote!("");
+
+    let expected = quote! { "" };
 
     assert_stream_eq!(output, expected);
 }
