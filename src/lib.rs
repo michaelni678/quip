@@ -11,7 +11,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! quip = "0.2.0"
+//! quip = "0.2.1"
 //! quote = "1"    # For `quip!` and `quip_spanned!`.
 //! syn = "2"      # For `parse_quip!` and `parse_quip_spanned!`.
 //! ```
@@ -87,7 +87,7 @@ mod core;
 ///
 /// ```toml
 /// [dependencies]
-/// quip = "0.2.0"
+/// quip = "0.2.1"
 /// quote = "1"
 /// ```
 ///
@@ -95,7 +95,7 @@ mod core;
 /// [`quote`]: https://crates.io/crates/quote
 #[proc_macro]
 pub fn quip(input: TokenStream) -> TokenStream {
-    let path = quote!(::quote::quote!);
+    let path = quote! { ::quote::quote! };
     core::expand(path, input.into()).into()
 }
 
@@ -108,7 +108,7 @@ pub fn quip(input: TokenStream) -> TokenStream {
 ///
 /// ```toml
 /// [dependencies]
-/// quip = "0.2.0"
+/// quip = "0.2.1"
 /// quote = "1"
 /// ```
 ///
@@ -116,7 +116,7 @@ pub fn quip(input: TokenStream) -> TokenStream {
 /// [`quote`]: https://crates.io/crates/quote
 #[proc_macro]
 pub fn quip_spanned(input: TokenStream) -> TokenStream {
-    let path = quote!(::quote::quote_spanned!);
+    let path = quote! { ::quote::quote_spanned! };
     core::expand(path, input.into()).into()
 }
 
@@ -129,7 +129,7 @@ pub fn quip_spanned(input: TokenStream) -> TokenStream {
 ///
 /// ```toml
 /// [dependencies]
-/// quip = "0.2.0"
+/// quip = "0.2.1"
 /// syn = "2"
 /// ```
 ///
@@ -137,7 +137,7 @@ pub fn quip_spanned(input: TokenStream) -> TokenStream {
 /// [`syn`]: https://crates.io/crates/syn
 #[proc_macro]
 pub fn parse_quip(input: TokenStream) -> TokenStream {
-    let path = quote!(::syn::parse_quote!);
+    let path = quote! { ::syn::parse_quote! };
     core::expand(path, input.into()).into()
 }
 
@@ -150,7 +150,7 @@ pub fn parse_quip(input: TokenStream) -> TokenStream {
 ///
 /// ```toml
 /// [dependencies]
-/// quip = "0.2.0"
+/// quip = "0.2.1"
 /// syn = "2"
 /// ```
 ///
@@ -158,6 +158,6 @@ pub fn parse_quip(input: TokenStream) -> TokenStream {
 /// [`syn`]: https://crates.io/crates/syn
 #[proc_macro]
 pub fn parse_quip_spanned(input: TokenStream) -> TokenStream {
-    let path = quote!(::syn::parse_quote_spanned!);
+    let path = quote! { ::syn::parse_quote_spanned! };
     core::expand(path, input.into()).into()
 }
