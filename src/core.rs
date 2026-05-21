@@ -53,27 +53,27 @@ where
     F: FnMut(TokenStream) -> TokenStream,
 {
     let mut output = TokenStream::new();
-    let mut token_trees = input.into_iter().peekable();
+    let mut trees = input.into_iter().peekable();
 
-    while let Some(token_tree) = token_trees.next() {
-        match token_tree {
+    while let Some(tree) = trees.next() {
+        match tree {
             TokenTree::Punct(punct)
                 if punct.is_char('#')
-                    && let Some(TokenTree::Group(group)) = token_trees.peek()
+                    && let Some(TokenTree::Group(group)) = trees.peek()
                     && group.is_braced()
                     && let expression = group.stream()
                     && !expression.is_empty() =>
             {
                 output.append(punct);
                 output.extend(apply(expression));
-                token_trees.next();
+                trees.next();
             }
             TokenTree::Group(group) => output.append(Group::new_spanned(
                 group.span(),
                 group.delimiter(),
                 walk(group.stream(), apply),
             )),
-            _ => output.append(token_tree),
+            _ => output.append(tree),
         }
     }
 
